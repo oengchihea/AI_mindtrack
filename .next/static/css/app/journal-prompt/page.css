@@ -1,0 +1,455 @@
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[5].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[5].use[3]!./app/journal-prompt/styles/journal-prompt.module.css ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************/
+/* Container styles */
+.journal-prompt_container__MY0LM {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f9fafb;
+  }
+  
+  .journal-prompt_darkContainer__9pyiw {
+    background-color: #111827;
+    color: #e5e7eb;
+  }
+  
+  .journal-prompt_title__1W_RU {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 0.5rem;
+  }
+  
+  .journal-prompt_subtitle__u3_B2 {
+    font-size: 1.1rem;
+    color: #6b7280;
+  }
+  
+  .journal-prompt_darkSubtitle__X_LOv {
+    color: #9ca3af;
+  }
+  
+  .journal-prompt_sectionTitle__qwuPx {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+  
+  .journal-prompt_darkSectionTitle__asTU_ {
+    color: #f3f4f6;
+  }
+  
+  /* Card styles */
+  .journal-prompt_card__5mGwD {
+    background-color: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .journal-prompt_darkCard__DWRw8 {
+    background-color: #1f2937;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Prompt styles */
+  .journal-prompt_promptContainer__93ofL {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+  
+  .journal-prompt_promptTitle__NwmHY {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+  }
+  
+  .journal-prompt_darkPromptTitle__KB8_R {
+    color: #f3f4f6;
+  }
+  
+  .journal-prompt_promptText__z6O2P {
+    font-size: 1.1rem;
+    color: #4b5563;
+    margin-bottom: 2rem;
+    max-width: 600px;
+  }
+  
+  .journal-prompt_darkPromptText__gy_d9 {
+    color: #d1d5db;
+  }
+  
+  .journal-prompt_promptButtons__LNvqF {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  /* AI Prompt Box */
+  .journal-prompt_aiPromptBox__KN_vh {
+    background-color: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 0.5rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    width: 100%;
+  }
+  
+  .journal-prompt_darkAiPromptBox__5626f {
+    background-color: #0c4a6e;
+    border-color: #0284c7;
+  }
+  
+  .journal-prompt_aiPromptLabel__1cBH1 {
+    position: absolute;
+    top: -0.75rem;
+    left: 1rem;
+    background-color: #bae6fd;
+    color: #0c4a6e;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+  }
+  
+  .journal-prompt_darkAiPromptLabel__ogPPv {
+    background-color: #0284c7;
+    color: #e0f2fe;
+  }
+  
+  /* Guided prompt styles */
+  .journal-prompt_guidedPromptContainer__bbG3Y {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  
+  .journal-prompt_progressIndicator__Cq9Vx {
+    margin-top: 1.5rem;
+    width: 100%;
+  }
+  
+  .journal-prompt_progressText__8GJVR {
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+  
+  .journal-prompt_darkProgressText__3hqBA {
+    color: #9ca3af;
+  }
+  
+  .journal-prompt_progressBar__0FtlS {
+    width: 100%;
+    height: 0.5rem;
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    overflow: hidden;
+  }
+  
+  .journal-prompt_darkProgressBar__EbPl2 {
+    background-color: #4b5563;
+  }
+  
+  .journal-prompt_progressFill__YiqzU {
+    height: 100%;
+    background-color: #3b82f6;
+    border-radius: 9999px;
+    transition: width 0.3s ease;
+  }
+  
+  /* Freeform journal styles */
+  .journal-prompt_freeformContainer__oaogg {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  
+  /* Final step styles */
+  .journal-prompt_finalStep__zFGwZ {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+  }
+  
+  /* Form styles */
+  .journal-prompt_formGroup__stzwn {
+    margin-bottom: 1.5rem;
+    width: 100%;
+  }
+  
+  .journal-prompt_label__Mf7sh {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #374151;
+  }
+  
+  .journal-prompt_darkLabel__OAMP0 {
+    color: #e5e7eb;
+  }
+  
+  .journal-prompt_input__NL00_ {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: white;
+    color: #1f2937;
+    transition: border-color 0.15s ease;
+  }
+  
+  .journal-prompt_input__NL00_:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+  
+  .journal-prompt_darkInput__5vN_s {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+  }
+  
+  .journal-prompt_darkInput__5vN_s:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+  }
+  
+  .journal-prompt_textarea__xKFQt {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: white;
+    color: #1f2937;
+    transition: border-color 0.15s ease;
+    min-height: 150px;
+    resize: vertical;
+  }
+  
+  .journal-prompt_textarea__xKFQt:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+  
+  .journal-prompt_darkTextarea__Z2hUs {
+    background-color: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+  }
+  
+  .journal-prompt_darkTextarea__Z2hUs:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3);
+  }
+  
+  .journal-prompt_largeTextarea__sw5QC {
+    min-height: 250px;
+  }
+  
+  /* Button styles */
+  .journal-prompt_buttonContainer__AAL_U {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  
+  .journal-prompt_button__GA1qz {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  .journal-prompt_primaryButton__pB_EI {
+    background-color: #1d4ed8;
+    color: white;
+    border: none;
+  }
+  
+  .journal-prompt_primaryButton__pB_EI:hover {
+    background-color: #1e40af;
+  }
+  
+  .journal-prompt_primaryButton__pB_EI:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.4);
+  }
+  
+  .journal-prompt_primaryButton__pB_EI:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+  }
+  
+  .journal-prompt_secondaryButton__70BHw {
+    background-color: white;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+  }
+  
+  .journal-prompt_secondaryButton__70BHw:hover {
+    background-color: #f9fafb;
+  }
+  
+  .journal-prompt_darkSecondaryButton__tVgLN {
+    background-color: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+  }
+  
+  .journal-prompt_darkSecondaryButton__tVgLN:hover {
+    background-color: #4b5563;
+  }
+  
+  /* Journal entry styles */
+  .journal-prompt_journalEntry__Fcm8F {
+    background-color: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    border-left: 4px solid #3b82f6;
+    margin-bottom: 1rem;
+  }
+  
+  .journal-prompt_darkJournalEntry__CDN88 {
+    background-color: #374151;
+    border-left-color: #60a5fa;
+  }
+  
+  .journal-prompt_journalTitle__EDdRr {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+  
+  .journal-prompt_darkJournalTitle__2j3No {
+    color: #f3f4f6;
+  }
+  
+  .journal-prompt_journalDate__myV7W {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .journal-prompt_darkJournalDate__Xm77B {
+    color: #9ca3af;
+  }
+  
+  .journal-prompt_journalContent__vkaKt {
+    color: #4b5563;
+    margin: 0.75rem 0;
+    white-space: pre-wrap;
+  }
+  
+  .journal-prompt_darkJournalContent__68k9q {
+    color: #d1d5db;
+  }
+  
+  .journal-prompt_journalMood__7MRys {
+    font-size: 0.875rem;
+    color: #6b7280;
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background-color: #e5e7eb;
+    border-radius: 9999px;
+    margin-top: 0.5rem;
+  }
+  
+  .journal-prompt_darkJournalMood__FlhVk {
+    color: #d1d5db;
+    background-color: #4b5563;
+  }
+  
+  .journal-prompt_moodLabel__CwU1K {
+    font-weight: 500;
+  }
+  
+  /* Loading styles */
+  .journal-prompt_loadingContainer__X8npG {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .journal-prompt_spinner__uN_Uv {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #3b82f6;
+    animation: journal-prompt_spin__YGQF_ 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  
+  @keyframes journal-prompt_spin__YGQF_ {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Toast notification */
+  .journal-prompt_toast__7s5FT {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    padding: 0.75rem 1.5rem;
+    background-color: #10b981;
+    color: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  
+  .journal-prompt_errorToast__rcSf7 {
+    background-color: #ef4444;
+  }
+  
+  .journal-prompt_showToast__FpBOW {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 640px) {
+    .journal-prompt_container__MY0LM {
+      padding: 1rem;
+    }
+  
+    .journal-prompt_title__1W_RU {
+      font-size: 2rem;
+    }
+  
+    .journal-prompt_promptButtons__LNvqF {
+      flex-direction: column;
+    }
+  
+    .journal-prompt_buttonContainer__AAL_U {
+      flex-direction: column;
+    }
+  }
+  

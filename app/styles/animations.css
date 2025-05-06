@@ -1,0 +1,83 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.5s ease-out;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.delayed-appear {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
+  animation-delay: 0.3s;
+}
+
+.staggered-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.staggered-item:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.staggered-item:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.staggered-item:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+.staggered-item:nth-child(5) {
+  animation-delay: 0.5s;
+}
+

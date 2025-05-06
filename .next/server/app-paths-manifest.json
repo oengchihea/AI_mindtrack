@@ -1,0 +1,9 @@
+{
+  "/api/list-models/route": "app/api/list-models/route.js",
+  "/api/insights/monthly/route": "app/api/insights/monthly/route.js",
+  "/api/insights/overview/route": "app/api/insights/overview/route.js",
+  "/api/insights/weekly/route": "app/api/insights/weekly/route.js",
+  "/page": "app/page.js",
+  "/insights/page": "app/insights/page.js",
+  "/journal-prompt/page": "app/journal-prompt/page.js"
+}
