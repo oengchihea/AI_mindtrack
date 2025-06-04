@@ -1,0 +1,5 @@
+{
+  "/api/journal-prompt/generate/route": "app/api/journal-prompt/generate/route.js",
+  "/page": "app/page.js",
+  "/journal-prompt/page": "app/journal-prompt/page.js"
+}

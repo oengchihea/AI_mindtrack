@@ -3,92 +3,84 @@
 import { useState } from "react"
 import GuidedPrompt from "./guided-prompt"
 import FreeformJournal from "./freeform-journal"
-import styles from "../styles/journal-prompt.module.css"
+// styles prop will be passed from page.jsx
 
-export default function JournalPromptUI({ saveJournal, darkMode }) {
-  const [showPrompt, setShowPrompt] = useState(true)
-  const [useGuided, setUseGuided] = useState(null)
-  const [journalContent, setJournalContent] = useState("")
-  const [journalTitle, setJournalTitle] = useState("")
-  const [journalMood, setJournalMood] = useState("")
-  const [loading, setLoading] = useState(false)
+export default function JournalPromptUI({ saveJournal, darkMode, styles, showAppToast }) {
+  const [showInitialChoice, setShowInitialChoice] = useState(true)
+  const [useGuided, setUseGuided] = useState(null) // true for guided, false for freeform
 
   const handleGuidedChoice = (choice) => {
     setUseGuided(choice)
-    setShowPrompt(false)
+    setShowInitialChoice(false)
   }
 
-  const handleSaveJournal = (content, title, mood) => {
-    if (!content) {
-      // Show error message
-      const errorToast = document.createElement("div")
-      errorToast.className = `${styles.toast} ${styles.errorToast}`
-      errorToast.textContent = "Please write something before saving your journal."
-      document.body.appendChild(errorToast)
-
-      setTimeout(() => {
-        errorToast.classList.add(styles.showToast)
-      }, 100)
-
-      setTimeout(() => {
-        errorToast.classList.remove(styles.showToast)
-        setTimeout(() => {
-          document.body.removeChild(errorToast)
-        }, 300)
-      }, 3000)
+  const handleSaveJournalFromChild = (content, title, mood) => {
+    if (!content && useGuided === false) {
+      // Only enforce for freeform if content is primary
+      if (showAppToast) showAppToast("Please write something before saving your journal.", true)
       return
     }
 
     const journalEntry = {
       content,
-      title: title || "Journal Entry",
+      title: title || (useGuided ? "Guided Entry" : "Journal Entry"),
       mood: mood || "",
-      isGuided: useGuided,
+      isGuided: useGuided, // Store if it was a guided session
     }
 
-    const journalId = saveJournal(journalEntry)
+    saveJournal(journalEntry) // This calls the saveJournal from page.jsx
 
-    // Reset the form
-    setJournalContent("")
-    setJournalTitle("")
-    setJournalMood("")
-    setShowPrompt(true)
+    // Reset to initial choice screen
+    setShowInitialChoice(true)
     setUseGuided(null)
   }
 
-  const resetJournal = () => {
-    setShowPrompt(true)
+  const resetToInitialChoice = () => {
+    setShowInitialChoice(true)
     setUseGuided(null)
-    setJournalContent("")
-    setJournalTitle("")
-    setJournalMood("")
   }
 
   return (
     <div className={`${styles.card} ${darkMode ? styles.darkCard : ""}`}>
-      {showPrompt ? (
+      {showInitialChoice ? (
         <div className={styles.promptContainer}>
-          <h2 className={styles.promptTitle}>Guided Journal Prompt</h2>
-          <div className={styles.aiPromptBox}>
-            <div className={styles.aiPromptLabel}>AI-generated prompt</div>
-            <p className={styles.promptText}>Would you like AI to guide you through the journaling process?</p>
-          </div>
+          <h2 className={`${styles.promptTitle} ${darkMode ? styles.darkPromptTitle : ""}`}>
+            How would you like to journal?
+          </h2>
+          {/* Removed the AI prompt box for this initial choice to simplify */}
+          <p className={`${styles.promptText} ${darkMode ? styles.darkPromptText : ""}`}>
+            Choose between an AI-guided session or a freeform entry.
+          </p>
           <div className={styles.promptButtons}>
-            <button onClick={() => handleGuidedChoice(true)} className={`${styles.button} ${styles.primaryButton}`}>
-              Yes
+            <button
+              onClick={() => handleGuidedChoice(true)}
+              className={`${styles.button} ${styles.primaryButton} ${darkMode ? styles.darkButton : ""}`}
+            >
+              AI Guided
             </button>
             <button
               onClick={() => handleGuidedChoice(false)}
               className={`${styles.button} ${styles.secondaryButton} ${darkMode ? styles.darkSecondaryButton : ""}`}
             >
-              No
+              Freeform
             </button>
           </div>
         </div>
       ) : useGuided ? (
-        <GuidedPrompt onComplete={handleSaveJournal} onCancel={resetJournal} darkMode={darkMode} />
+        <GuidedPrompt
+          onComplete={handleSaveJournalFromChild}
+          onCancel={resetToInitialChoice}
+          darkMode={darkMode}
+          styles={styles}
+          showAppToast={showAppToast} // Pass down the toast function
+        />
       ) : (
-        <FreeformJournal onSave={handleSaveJournal} onCancel={resetJournal} darkMode={darkMode} />
+        <FreeformJournal
+          onSave={handleSaveJournalFromChild}
+          onCancel={resetToInitialChoice}
+          darkMode={darkMode}
+          styles={styles} // Pass styles if FreeformJournal uses them
+        />
       )}
     </div>
   )

@@ -1,132 +1,136 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import styles from "../styles/journal-prompt.module.css"
+import { useState, useEffect, useCallback } from "react"
+// styles prop will be passed from journal-prompt-ui.jsx, originating from page.jsx
 
-export default function GuidedPrompt({ onComplete, onCancel, darkMode }) {
-  const [loading, setLoading] = useState(false)
+const DEFAULT_PROMPTS = [
+  "How did you feel overall today, and what influenced your mood the most?",
+  "What was the most challenging part of your day, and how did you handle it?",
+  "What is one small win or positive moment you can appreciate from today?",
+]
+
+export default function GuidedPrompt({ onComplete, onCancel, darkMode, styles, showAppToast }) {
+  const [isLoading, setIsLoading] = useState(true) // Start loading true
   const [currentStep, setCurrentStep] = useState(0)
   const [prompts, setPrompts] = useState([])
-  const [responses, setResponses] = useState([])
+  const [responses, setResponses] = useState([]) // Array to store responses for each prompt
   const [currentResponse, setCurrentResponse] = useState("")
   const [journalTitle, setJournalTitle] = useState("")
   const [journalMood, setJournalMood] = useState("")
+  const [error, setError] = useState(null)
 
-  useEffect(() => {
-    // Fetch prompts when component mounts
-    fetchPrompts()
-  }, [])
+  const fetchApiPrompts = useCallback(async () => {
+    setIsLoading(true)
+    setError(null)
+    setResponses([]) // Reset responses when fetching new prompts
+    setCurrentResponse("")
+    setCurrentStep(0)
 
-  const fetchPrompts = async () => {
-    setLoading(true)
     try {
       const response = await fetch("/api/journal-prompt/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          promptType: "guided",
-          count: 3, // Number of prompts to generate
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ promptType: "guided", count: 3 }),
       })
 
+      const responseText = await response.text() // Read the body ONCE as text
+
       if (!response.ok) {
-        throw new Error("Failed to fetch prompts")
+        let errorDetails = responseText // Default to the raw text
+        try {
+          const errorData = JSON.parse(responseText) // Try to parse the text as JSON
+          errorDetails = errorData.error || errorData.details || JSON.stringify(errorData)
+        } catch (e) {
+          // Parsing failed, errorDetails remains the raw responseText or a generic message
+          console.warn("Could not parse error response as JSON:", e)
+          if (!errorDetails && response.status) {
+            // if responseText was empty
+            errorDetails = `API request failed with status: ${response.status}`
+          } else if (!errorDetails) {
+            errorDetails = "API request failed with an unknown error."
+          }
+        }
+        console.error("Failed to fetch prompts from API:", errorDetails)
+        throw new Error(errorDetails) // This will be caught by the outer catch
       }
 
-      const data = await response.json()
-      setPrompts(data.prompts)
-    } catch (error) {
-      console.error("Error fetching prompts:", error)
-
-      // Show error toast
-      const errorToast = document.createElement("div")
-      errorToast.className = `${styles.toast} ${styles.errorToast}`
-      errorToast.textContent = "Failed to load journal prompts. Using default prompts instead."
-      document.body.appendChild(errorToast)
-
-      setTimeout(() => {
-        errorToast.classList.add(styles.showToast)
-      }, 100)
-
-      setTimeout(() => {
-        errorToast.classList.remove(styles.showToast)
-        setTimeout(() => {
-          document.body.removeChild(errorToast)
-        }, 300)
-      }, 3000)
-
-      // Set some default prompts as fallback
-      setPrompts([
-        "How did you feel overall today, and what influenced your mood the most?",
-        "What was the most challenging part of your day, and how did you handle it?",
-        "What is one small win or positive moment you can appreciate from today?",
-      ])
+      // If response.ok, parse the responseText
+      const data = JSON.parse(responseText)
+      if (data.prompts && data.prompts.length > 0) {
+        setPrompts(data.prompts)
+        setResponses(new Array(data.prompts.length).fill("")) // Initialize responses array
+      } else {
+        console.warn("API returned no prompts or invalid format, using defaults.")
+        setPrompts(DEFAULT_PROMPTS)
+        setResponses(new Array(DEFAULT_PROMPTS.length).fill(""))
+        setError("AI did not provide prompts. Using default questions.") // Set an error message for the UI
+      }
+    } catch (err) {
+      console.error("Error in fetchApiPrompts:", err)
+      const errorMessage = err.message || "Failed to load prompts. Using default questions."
+      setError(errorMessage)
+      setPrompts(DEFAULT_PROMPTS)
+      setResponses(new Array(DEFAULT_PROMPTS.length).fill(""))
+      if (showAppToast) showAppToast(errorMessage, true)
     } finally {
-      setLoading(false)
+      setIsLoading(false)
     }
-  }
+  }, [showAppToast])
+
+  useEffect(() => {
+    fetchApiPrompts()
+  }, [fetchApiPrompts])
 
   const handleNext = () => {
     if (!currentResponse.trim()) {
-      // Show error toast
-      const errorToast = document.createElement("div")
-      errorToast.className = `${styles.toast} ${styles.errorToast}`
-      errorToast.textContent = "Please write something before continuing."
-      document.body.appendChild(errorToast)
-
-      setTimeout(() => {
-        errorToast.classList.add(styles.showToast)
-      }, 100)
-
-      setTimeout(() => {
-        errorToast.classList.remove(styles.showToast)
-        setTimeout(() => {
-          document.body.removeChild(errorToast)
-        }, 300)
-      }, 3000)
+      if (showAppToast) showAppToast("Please write something before continuing.", true)
       return
     }
 
-    // Save current response
-    setResponses([...responses, currentResponse])
-    setCurrentResponse("")
+    const newResponses = [...responses]
+    newResponses[currentStep] = currentResponse
+    setResponses(newResponses)
+    setCurrentResponse("") // Clear for next prompt
 
-    // Move to next step or complete
     if (currentStep < prompts.length - 1) {
       setCurrentStep(currentStep + 1)
+      setCurrentResponse(newResponses[currentStep + 1] || "") // Pre-fill if already answered
     } else {
-      // Final step - collect title and mood
+      // Move to final step (collect title and mood)
       setCurrentStep(currentStep + 1)
     }
   }
 
   const handleComplete = () => {
-    // Combine all responses into a single journal entry
-    const combinedContent = prompts
-      .map((prompt, index) => {
-        return `${prompt}\n${responses[index] || ""}\n\n`
-      })
-      .join("")
+    // Ensure title/mood are captured if on final step, otherwise they might be from previous session
+    const finalTitle = currentStep === prompts.length ? journalTitle : ""
+    const finalMood = currentStep === prompts.length ? journalMood : ""
 
-    onComplete(combinedContent, journalTitle, journalMood)
+    const combinedContent = prompts
+      .map((prompt, index) => `Q: ${prompt}\nA: ${responses[index] || "(No answer provided)"}`)
+      .join("\n\n")
+
+    onComplete(combinedContent, finalTitle || prompts[0] || "Guided Entry", finalMood)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
         <div className={styles.spinner}></div>
-        <p>Loading journal prompts...</p>
+        <p className={darkMode ? styles.darkProgressText : styles.progressText}>Loading journal prompts...</p>
       </div>
     )
   }
 
   // Final step - title and mood
-  if (currentStep === prompts.length) {
+  if (prompts.length > 0 && currentStep === prompts.length) {
     return (
       <div className={styles.finalStep}>
-        <h2 className={styles.promptTitle}>Complete Your Journal</h2>
+        <h2 className={`${styles.promptTitle} ${darkMode ? styles.darkPromptTitle : ""}`}>Complete Your Journal</h2>
+        {/* Display general error if it occurred during fetching and led to defaults */}
+        {error && prompts === DEFAULT_PROMPTS && (
+          <div className={`${styles.toast} ${styles.errorToast} ${styles.showToast}`}>{error}</div>
+        )}
 
         <div className={styles.formGroup}>
           <label className={`${styles.label} ${darkMode ? styles.darkLabel : ""}`}>
@@ -169,11 +173,35 @@ export default function GuidedPrompt({ onComplete, onCancel, darkMode }) {
     )
   }
 
+  if (!prompts || prompts.length === 0 || (error && prompts === DEFAULT_PROMPTS && !isLoading)) {
+    // This condition handles cases where prompts are empty or only defaults are shown due to an error
+    return (
+      <div className={styles.guidedPromptContainer}>
+        {error && <div className={`${styles.toast} ${styles.errorToast} ${styles.showToast}`}>{error}</div>}
+        <p className={darkMode ? styles.darkPromptText : styles.promptText}>
+          {error ? "" : "No prompts available at the moment. Please try again later."}
+        </p>
+        <div className={styles.buttonContainer}>
+          <button
+            onClick={onCancel} // Or fetchApiPrompts again
+            className={`${styles.button} ${styles.secondaryButton} ${darkMode ? styles.darkSecondaryButton : ""}`}
+          >
+            {error ? "Try Again" : "Back"}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={styles.guidedPromptContainer}>
-      <div className={styles.aiPromptBox}>
-        <div className={styles.aiPromptLabel}>AI-generated prompt</div>
-        <h2 className={styles.promptTitle}>{prompts[currentStep]}</h2>
+      {/* Display error if it occurred during fetching and led to defaults, but not if loading */}
+      {error && prompts === DEFAULT_PROMPTS && !isLoading && (
+        <div className={`${styles.toast} ${styles.errorToast} ${styles.showToast}`}>{error}</div>
+      )}
+      <div className={`${styles.aiPromptBox} ${darkMode ? styles.darkAiPromptBox : ""}`}>
+        <div className={`${styles.aiPromptLabel} ${darkMode ? styles.darkAiPromptLabel : ""}`}>AI-generated prompt</div>
+        <h2 className={`${styles.promptTitle} ${darkMode ? styles.darkPromptTitle : ""}`}>{prompts[currentStep]}</h2>
       </div>
 
       <textarea
@@ -181,11 +209,12 @@ export default function GuidedPrompt({ onComplete, onCancel, darkMode }) {
         onChange={(e) => setCurrentResponse(e.target.value)}
         placeholder="Write it here..."
         className={`${styles.textarea} ${darkMode ? styles.darkTextarea : ""}`}
+        rows={5}
       />
 
       <div className={styles.buttonContainer}>
         <button onClick={handleNext} className={`${styles.button} ${styles.primaryButton}`}>
-          Next
+          {currentStep < prompts.length - 1 ? "Next" : "Review & Finish"}
         </button>
         <button
           onClick={onCancel}
@@ -196,13 +225,13 @@ export default function GuidedPrompt({ onComplete, onCancel, darkMode }) {
       </div>
 
       <div className={styles.progressIndicator}>
-        <span className={styles.progressText}>
+        <span className={`${styles.progressText} ${darkMode ? styles.darkProgressText : ""}`}>
           Question {currentStep + 1} of {prompts.length}
         </span>
-        <div className={styles.progressBar}>
+        <div className={`${styles.progressBar} ${darkMode ? styles.darkProgressBar : ""}`}>
           <div
             className={styles.progressFill}
-            style={{ width: `${((currentStep + 1) / prompts.length) * 100}%` }}
+            style={{ width: `${prompts.length > 0 ? ((currentStep + 1) / prompts.length) * 100 : 0}%` }}
           ></div>
         </div>
       </div>

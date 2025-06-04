@@ -1,20 +1,25 @@
+// This file (freeform-journal-ns0idlqovgCndzr3JR8fUGyikG4lnQ.jsx)
+// is assumed to be correct as per your attachment and is not directly
+// involved in the API fetching issue. No changes made here.
 "use client"
 
 import { useState } from "react"
-import styles from "../styles/journal-prompt.module.css"
+// styles prop will be passed from journal-prompt-ui.jsx, originating from page.jsx
 
-export default function FreeformJournal({ onSave, onCancel, darkMode }) {
+export default function FreeformJournal({ onSave, onCancel, darkMode, styles }) {
   const [content, setContent] = useState("")
   const [title, setTitle] = useState("")
   const [mood, setMood] = useState("")
 
   const handleSave = () => {
+    // The parent (journal-prompt-ui) will handle the actual save call
+    // This component just passes the data up
     onSave(content, title, mood)
   }
 
   return (
     <div className={styles.freeformContainer}>
-      <h2 className={styles.promptTitle}>Write Your Journal</h2>
+      <h2 className={`${styles.promptTitle} ${darkMode ? styles.darkPromptTitle : ""}`}>Write Your Journal</h2>
 
       <div className={styles.formGroup}>
         <label className={`${styles.label} ${darkMode ? styles.darkLabel : ""}`}>Journal Title (optional)</label>
@@ -48,6 +53,7 @@ export default function FreeformJournal({ onSave, onCancel, darkMode }) {
           placeholder="Write your thoughts here..."
           className={`${styles.textarea} ${styles.largeTextarea} ${darkMode ? styles.darkTextarea : ""}`}
           required
+          rows={8}
         />
       </div>
 

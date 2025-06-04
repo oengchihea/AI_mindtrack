@@ -10,14 +10,22 @@ export default function JournalPromptPage() {
   const [darkMode, setDarkMode] = useState(false)
 
   useEffect(() => {
-    // Check if dark mode is enabled
-    const isDarkMode = document.documentElement.classList.contains("dark")
-    setDarkMode(isDarkMode)
+    const isDarkModeEnabled =
+      document.documentElement.classList.contains("dark") ||
+      (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)
+    setDarkMode(isDarkModeEnabled)
 
-    // Load saved journals from localStorage
     const savedJournals = localStorage.getItem("savedJournals")
     if (savedJournals) {
-      setJournals(JSON.parse(savedJournals))
+      try {
+        setJournals(JSON.parse(savedJournals))
+      } catch (error) {
+        console.error("Failed to parse saved journals from localStorage:", error)
+        localStorage.removeItem("savedJournals") // Clear corrupted data
+        setJournals([])
+        // Optionally, inform the user about the corrupted data
+        // showToast("Error: Could not load saved journals. Data was corrupted.", true);
+      }
     }
   }, [])
 
@@ -33,15 +41,14 @@ export default function JournalPromptPage() {
     setJournals(updatedJournals)
     localStorage.setItem("savedJournals", JSON.stringify(updatedJournals))
 
-    // Show toast notification
     showToast("Journal saved successfully")
-
-    return newJournal.id
+    return newJournal.id // As per original journal-prompt-ui.jsx expectation
   }
 
-  const showToast = (message) => {
+  // Your existing showToast function
+  const showToast = (message, isError = false) => {
     const toast = document.createElement("div")
-    toast.className = styles.toast
+    toast.className = `${styles.toast} ${isError ? styles.errorToast : ""}`
     toast.textContent = message
     document.body.appendChild(toast)
 
@@ -52,18 +59,23 @@ export default function JournalPromptPage() {
     setTimeout(() => {
       toast.classList.remove(styles.showToast)
       setTimeout(() => {
-        document.body.removeChild(toast)
+        if (document.body.contains(toast)) {
+          // Check if still in DOM before removing
+          document.body.removeChild(toast)
+        }
       }, 300)
     }, 3000)
   }
 
   return (
     <div className={`${styles.container} ${darkMode ? styles.darkContainer : ""}`}>
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto max-w-4xl py-8 px-4">
         <header className="flex justify-between items-center mb-8">
           <div>
-            <h1 className={styles.title}>Your Journal</h1>
-            <p className={styles.subtitle}>Reflect on your thoughts and feelings</p>
+            <h1 className={`${styles.title} ${darkMode ? styles.darkPromptTitle : ""}`}>Your Journal</h1>
+            <p className={`${styles.subtitle} ${darkMode ? styles.darkSubtitle : ""}`}>
+              Reflect on your thoughts and feelings
+            </p>
           </div>
           <div className="flex items-center space-x-4">
             <Link
@@ -75,22 +87,31 @@ export default function JournalPromptPage() {
           </div>
         </header>
 
-        <JournalPromptUI saveJournal={saveJournal} darkMode={darkMode} />
+        <JournalPromptUI saveJournal={saveJournal} darkMode={darkMode} styles={styles} showAppToast={showToast} />
 
         {journals.length > 0 && (
-          <div className={`mt-8 ${styles.card} ${darkMode ? styles.darkCard : ""}`}>
-            <h2 className={styles.sectionTitle}>Your Journal Entries</h2>
+          <div className={`mt-12 ${styles.card} ${darkMode ? styles.darkCard : ""}`}>
+            <h2 className={`${styles.sectionTitle} ${darkMode ? styles.darkSectionTitle : ""}`}>
+              Your Journal Entries
+            </h2>
             <div className="space-y-4 mt-4">
               {journals.map((journal) => (
                 <div key={journal.id} className={`${styles.journalEntry} ${darkMode ? styles.darkJournalEntry : ""}`}>
                   <div className="flex justify-between items-start">
-                    <h3 className={styles.journalTitle}>{journal.title || "Journal Entry"}</h3>
-                    <span className={styles.journalDate}>{journal.date}</span>
+                    <h3 className={`${styles.journalTitle} ${darkMode ? styles.darkJournalTitle : ""}`}>
+                      {journal.title || "Journal Entry"}
+                    </h3>
+                    <span className={`${styles.journalDate} ${darkMode ? styles.darkJournalDate : ""}`}>
+                      {journal.date}
+                    </span>
                   </div>
-                  <p className={styles.journalContent}>{journal.content}</p>
+                  <p className={`${styles.journalContent} ${darkMode ? styles.darkJournalContent : ""}`}>
+                    {journal.content}
+                  </p>
                   {journal.mood && (
-                    <div className={styles.journalMood}>
-                      <span className={styles.moodLabel}>Mood:</span> {journal.mood}
+                    <div className={`${styles.journalMood} ${darkMode ? styles.darkJournalMood : ""}`}>
+                      <span className={`${styles.moodLabel} ${darkMode ? styles.darkMoodLabel : ""}`}>Mood:</span>{" "}
+                      {journal.mood}
                     </div>
                   )}
                 </div>
