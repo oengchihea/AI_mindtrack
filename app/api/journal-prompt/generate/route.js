@@ -79,7 +79,7 @@ async function generatePromptsForAI(promptInstruction) {
 }
 
 export async function POST(req) {
-  console.log("API Route /api/journal-prompt/generate: Received POST request.")
+  console.log("API Route /api/analyze-data/generate: Received POST request.")
   try {
     const { promptType = "guided", count = 3, topic, mood } = await req.json()
     console.log(
@@ -154,8 +154,22 @@ Return the prompts as a JSON array of strings in this format: {"prompts": ["prom
       )
     }
 
-    console.log("API Route: Successfully generated prompts. Sending response to client.")
-    return NextResponse.json(result)
+    // Add a basic score based on mood (default 5.0, adjusted for mood)
+    let score = 5.0;
+    if (mood) {
+      const moodLower = mood.toLowerCase();
+      if (moodLower.includes("happy") || moodLower.includes("joy")) score = 8.0;
+      else if (moodLower.includes("sad") || moodLower.includes("depressed")) score = 3.0;
+      else if (moodLower.includes("angry") || moodLower.includes("frustrated")) score = 4.0;
+    }
+
+    const responseData = {
+      ...result,
+      score: score,
+    };
+
+    console.log("API Route: Successfully generated prompts with score. Sending response to client.")
+    return NextResponse.json(responseData)
   } catch (error) {
     console.error("API Route: Unhandled exception in POST handler:", error.message, error.stack)
     return NextResponse.json(

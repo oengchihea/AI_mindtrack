@@ -26,12 +26,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/journal-prompt/generate/route.js"
-    ],
-    "/mood-analyzer/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/mood-analyzer/page.css",
-      "static/chunks/app/mood-analyzer/page.js"
     ]
   }
 }
