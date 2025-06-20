@@ -70,7 +70,7 @@ Return a JSON object with:
 }
 
 export async function POST(req) {
-  console.log("API Route /api/analyze-journal: Received POST request.");
+  console.log("API Route /api/analyze-journal/generate: Received POST request.");
   try {
     const { content, questionnaireData, userId } = await req.json();
     console.log(`API Route: Analyzing journal content: ${content}, questionnaireData: ${JSON.stringify(questionnaireData)}, userId: ${userId}`);
