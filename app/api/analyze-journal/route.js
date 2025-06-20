@@ -50,8 +50,15 @@ Return a JSON object with:
     });
 
     const response = await result.response;
-    const jsonString = response.text();
-    console.log(`analyzeJournalContent: Received response: ${jsonString}`);
+    let jsonString = response.text();
+    console.log(`analyzeJournalContent: Raw response: ${jsonString}`);
+
+    // Strip markdown code block if present
+    const jsonMatch = jsonString.match(/```json\n([\s\S]*?)\n```/);
+    if (jsonMatch && jsonMatch[1]) {
+      jsonString = jsonMatch[1].trim();
+      console.log(`analyzeJournalContent: Extracted JSON: ${jsonString}`);
+    }
 
     try {
       const parsedResult = JSON.parse(jsonString);
@@ -70,7 +77,7 @@ Return a JSON object with:
 }
 
 export async function POST(req) {
-  console.log("API Route /api/analyze-journal/generate: Received POST request.");
+  console.log("API Route /api/analyze-journal: Received POST request.");
   try {
     const { content, questionnaireData, userId } = await req.json();
     console.log(`API Route: Analyzing journal content: ${content}, questionnaireData: ${JSON.stringify(questionnaireData)}, userId: ${userId}`);
