@@ -53,27 +53,22 @@ Return a JSON object with:
     let jsonString = response.text().trim();
     console.log(`analyzeJournalContent: Raw response: ${jsonString}`);
 
-    // Attempt to extract JSON from markdown code block
-    let extractedJson = jsonString;
-    const jsonMatch = jsonString.match(/```json\n([\s\S]*?)\n```/);
-    if (jsonMatch && jsonMatch[1]) {
-      extractedJson = jsonMatch[1].trim();
-      console.log(`analyzeJournalContent: Extracted JSON from code block: ${extractedJson}`);
-    } else {
-      // Fallback to parse raw response if no code block is found
-      console.log(`analyzeJournalContent: No code block detected, attempting raw JSON parse...`);
+    // Clean the response to ensure valid JSON
+    jsonString = jsonString.replace(/```json\n|```/g, '').trim();
+    if (!jsonString.startsWith('{')) {
+      jsonString = `{${jsonString}}`; // Wrap in object if missing
     }
 
     try {
-      const parsedResult = JSON.parse(extractedJson);
+      const parsedResult = JSON.parse(jsonString);
       if (parsedResult.sentiment && typeof parsedResult.score === "number" && Array.isArray(parsedResult.themes)) {
         console.log(`analyzeJournalContent: Successfully parsed result: ${JSON.stringify(parsedResult)}`);
         return parsedResult;
       }
       throw new Error("Invalid response format");
     } catch (parseError) {
-      console.error("analyzeJournalContent: Error parsing JSON:", parseError, "Raw JSON attempted:", extractedJson);
-      return { error: "Failed to parse analysis response: " + extractedJson };
+      console.error("analyzeJournalContent: Error parsing JSON:", parseError, "Raw JSON attempted:", jsonString);
+      return { error: "Failed to parse analysis response: " + jsonString };
     }
   } catch (apiError) {
     console.error("analyzeJournalContent: Gemini API call error:", apiError);
