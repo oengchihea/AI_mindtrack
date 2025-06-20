@@ -15,17 +15,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/list-models/route.js"
-    ],
-    "/journal-prompt/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/css/app/journal-prompt/page.css",
-      "static/chunks/app/journal-prompt/page.js"
-    ],
-    "/api/journal-prompt/generate/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/journal-prompt/generate/route.js"
     ]
   }
 }
