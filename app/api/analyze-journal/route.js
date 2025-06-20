@@ -50,25 +50,30 @@ Return a JSON object with:
     });
 
     const response = await result.response;
-    let jsonString = response.text();
+    let jsonString = response.text().trim();
     console.log(`analyzeJournalContent: Raw response: ${jsonString}`);
 
-    // Strip markdown code block if present
+    // Attempt to extract JSON from markdown code block
+    let extractedJson = jsonString;
     const jsonMatch = jsonString.match(/```json\n([\s\S]*?)\n```/);
     if (jsonMatch && jsonMatch[1]) {
-      jsonString = jsonMatch[1].trim();
-      console.log(`analyzeJournalContent: Extracted JSON: ${jsonString}`);
+      extractedJson = jsonMatch[1].trim();
+      console.log(`analyzeJournalContent: Extracted JSON from code block: ${extractedJson}`);
+    } else {
+      // Fallback to parse raw response if no code block is found
+      console.log(`analyzeJournalContent: No code block detected, attempting raw JSON parse...`);
     }
 
     try {
-      const parsedResult = JSON.parse(jsonString);
+      const parsedResult = JSON.parse(extractedJson);
       if (parsedResult.sentiment && typeof parsedResult.score === "number" && Array.isArray(parsedResult.themes)) {
+        console.log(`analyzeJournalContent: Successfully parsed result: ${JSON.stringify(parsedResult)}`);
         return parsedResult;
       }
       throw new Error("Invalid response format");
     } catch (parseError) {
-      console.error("analyzeJournalContent: Error parsing JSON:", parseError);
-      return { error: "Failed to parse analysis response: " + jsonString };
+      console.error("analyzeJournalContent: Error parsing JSON:", parseError, "Raw JSON attempted:", extractedJson);
+      return { error: "Failed to parse analysis response: " + extractedJson };
     }
   } catch (apiError) {
     console.error("analyzeJournalContent: Gemini API call error:", apiError);
@@ -95,7 +100,7 @@ export async function POST(req) {
       return NextResponse.json({ error: result.error }, { status: 500 });
     }
 
-    console.log("API Route: Successfully analyzed journal content. Sending response to client.");
+    console.log("API Route: Successfully analyzed journal content. Sending response to client:", JSON.stringify(result));
     return NextResponse.json(result);
   } catch (error) {
     console.error("API Route: Unhandled exception in POST handler:", error.message, error.stack);
