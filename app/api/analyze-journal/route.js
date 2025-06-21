@@ -46,6 +46,7 @@ Return a JSON object with:
   "insights": "...",
   "emoji": "..."
 }
+Ensure the 'score' is an integer between 0 and 10 and 'themes' is a non-empty array.
 `;
 
   try {
@@ -73,19 +74,14 @@ Return a JSON object with:
         parsedResult.score >= 0 &&
         parsedResult.score <= 10 &&
         Array.isArray(parsedResult.themes) &&
+        parsedResult.themes.length > 0 &&
         parsedResult.insights &&
         parsedResult.emoji
       ) {
         console.log(`analyzeJournalContent: Successfully parsed result: ${JSON.stringify(parsedResult)}`);
-        return {
-          sentiment: parsedResult.sentiment,
-          score: parsedResult.score,
-          themes: parsedResult.themes,
-          insights: parsedResult.insights,
-          emoji: parsedResult.emoji
-        };
+        return parsedResult;
       }
-      throw new Error("Invalid response format or non-integer score");
+      throw new Error("Invalid response format: Missing required fields or invalid score/themes");
     } catch (parseError) {
       console.error("analyzeJournalContent: Error parsing JSON:", parseError, "Raw JSON attempted:", jsonString);
       return { error: "Failed to parse analysis response: " + jsonString };
@@ -120,7 +116,7 @@ export async function POST(req) {
   } catch (error) {
     console.error("API Route: Unhandled exception in POST handler:", error.message, error.stack);
     return NextResponse.json(
-      { error: "An unexpected server error occurred.", details: error.message },
+      { error: "An unexpected server error occurred in POST handler.", details: error.message },
       { status: 500 }
     );
   }
