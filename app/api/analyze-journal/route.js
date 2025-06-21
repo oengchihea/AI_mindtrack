@@ -38,7 +38,14 @@ Return a JSON object with:
 - score: (number between 0 and 10)
 - themes: (array of strings, e.g., ["stress", "gratitude"])
 - insights: (string with a brief insight)
-{"sentiment": "...", "score": number, "themes": [...], "insights": "..."}
+- emoji: (string with a relevant emoji)
+{
+  "sentiment": "...",
+  "score": number,
+  "themes": [...],
+  "insights": "...",
+  "emoji": "..."
+}
 `;
 
   try {
@@ -56,16 +63,30 @@ Return a JSON object with:
     // Clean the response to ensure valid JSON
     jsonString = jsonString.replace(/```json\n|```/g, '').trim();
     if (!jsonString.startsWith('{')) {
-      jsonString = `{${jsonString}}`; // Wrap in object if missing
+      jsonString = `{${jsonString}}`;
     }
 
     try {
       const parsedResult = JSON.parse(jsonString);
-      if (parsedResult.sentiment && typeof parsedResult.score === "number" && Array.isArray(parsedResult.themes)) {
+      if (
+        parsedResult.sentiment &&
+        typeof parsedResult.score === "number" &&
+        parsedResult.score >= 0 &&
+        parsedResult.score <= 10 &&
+        Array.isArray(parsedResult.themes) &&
+        parsedResult.insights &&
+        parsedResult.emoji
+      ) {
         console.log(`analyzeJournalContent: Successfully parsed result: ${JSON.stringify(parsedResult)}`);
-        return parsedResult;
+        return {
+          sentiment: parsedResult.sentiment,
+          score: Math.round(parsedResult.score), // Ensure integer score
+          themes: parsedResult.themes,
+          insights: parsedResult.insights,
+          emoji: parsedResult.emoji
+        };
       }
-      throw new Error("Invalid response format");
+      throw new Error("Invalid response format or missing required fields");
     } catch (parseError) {
       console.error("analyzeJournalContent: Error parsing JSON:", parseError, "Raw JSON attempted:", jsonString);
       return { error: "Failed to parse analysis response: " + jsonString };
